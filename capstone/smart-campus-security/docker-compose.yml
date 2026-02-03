@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  smart-campus-security:
+    build: .
+    container_name: smart-campus-security
+    ports:
+      - "8501:8501"  # Streamlit
+      - "8000:8000"  # FastAPI (if needed)
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./config.yaml:/app/config.yaml
+      - /dev/video0:/dev/video0  # Camera 0
+      - /dev/video1:/dev/video1  # Camera 1 (if available)
+    devices:
+      - /dev/video0:/dev/video0
+      - /dev/video1:/dev/video1
+    environment:
+      - TZ=Asia/Kolkata
+    restart: unless-stopped
+    privileged: true  # Required for camera access

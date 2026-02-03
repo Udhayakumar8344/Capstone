@@ -1,0 +1,117 @@
+# Smart Campus Security & Attendance 2.0 Configuration
+
+# Camera Settings
+cameras:
+  - id: 0  # Default Laptop Webcam
+    name: "Gate Camera"
+    location: "Main Gate"
+    enabled: false
+  
+  # Mobile Camera Configuration
+  - id: "http://10.158.6.113:4747/mjpegfeed"  # Try alternate DroidCam URL
+    name: "Mobile Camera"
+    location: "Campus Entrance"
+    enabled: true
+
+# Model Paths
+models:
+  arcface:
+    path: "models/arcface/buffalo_sc"
+    backend: "onnx"
+  yolo:
+    path: "models/yolov8/yolov8n-face.tflite"
+    confidence_threshold: 0.5
+    iou_threshold: 0.45
+
+# Recognition Settings
+recognition:
+  confidence_threshold: 0.80  # Stricter threshold to avoid wrong names (increased from 0.75)
+  embedding_dim: 512
+  max_faces_per_frame: 10
+
+# Role Colors (BGR format for OpenCV)
+role_colors:
+  student: [0, 255, 0]      # Green
+  staff: [255, 0, 0]        # Blue
+  labour: [0, 165, 255]     # Orange
+  unknown: [0, 0, 255]      # Red
+
+# Tracking Settings
+tracking:
+  similarity_threshold: 0.75  # Increased from 0.7 for more stable tracking
+  track_timeout: 300  # seconds
+  max_tracks: 100
+
+# Alert Settings
+alerts:
+  unknown_person:
+    enabled: true
+    sound: true
+    email: true
+    snapshot: true
+  late_entry:
+    enabled: true
+    threshold_minutes: 30  # Minutes after average arrival time
+    email: true
+  no_mask:
+    enabled: false  # Set to true if mask required
+    sound: true
+  no_helmet:
+    enabled: true  # For labour role
+    sound: true
+
+# Email Configuration (SMTP)
+email:
+  enabled: true
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  sender_email: "your-email@gmail.com"
+  sender_password: "your-app-password"  # Use app-specific password
+  recipient_emails:
+    - "security@campus.edu"
+  retry_attempts: 3
+
+# Database Settings
+database:
+  path: "data/database.db"
+  backup_enabled: true
+  backup_interval_hours: 24
+
+# Analytics Settings
+analytics:
+  anomaly_detection:
+    enabled: true
+    retrain_interval_days: 7
+    contamination: 0.1  # Expected anomaly ratio
+  prediction:
+    enabled: true
+    forecast_days: 7
+  working_hours:
+    start: "08:00"
+    end: "18:00"
+
+# Performance Settings
+performance:
+  frame_skip: 3  # Process every 3rd frame (lighter load)
+  resize_width: 320
+  resize_height: 240
+  max_fps: 30  # Allow higher capture FPS (skipping will handle load)
+
+# Storage Settings
+storage:
+  snapshots_path: "data/snapshots"
+  embeddings_path: "data/embeddings"
+  exports_path: "data/exports"
+  max_snapshot_age_days: 30  # Auto-delete old snapshots
+
+# API Settings
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_enabled: true
+
+# Dashboard Settings
+dashboard:
+  port: 8501
+  refresh_interval: 2  # seconds
+  max_log_entries: 100
